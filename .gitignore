@@ -1,0 +1,9 @@
+backend/.cargo
+backend/target
+backend/Cargo.lock
+
+frontend/dist
+frontend/.output
+frontend/.vinxi
+frontend/node_modules
+frontend/package-lock.json
