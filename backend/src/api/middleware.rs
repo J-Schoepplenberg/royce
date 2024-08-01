@@ -14,9 +14,6 @@ pub async fn check_auth(
     request: Request,
     next: Next,
 ) -> Result<impl IntoResponse, StatusCode> {
-    println!("request: {:#?}", request);
-    println!("auth: {:#?}", auth);
-
     auth.user.ok_or(StatusCode::UNAUTHORIZED)?;
     Ok(next.run(request).await)
 }

@@ -9,7 +9,6 @@ export class Requests {
   ): Promise<Response> {
     try {
       const response = await fetch(path, options);
-      console.log("res: ", response);
       if (!response.ok) {
         Logger.error(this, `Request to ${path} failed:`, response, options);
         throw new Error(`HTTP error! status: ${response.status}`);
