@@ -3,9 +3,7 @@ use askama_axum::IntoResponse;
 use axum::{extract::Request, middleware::Next};
 use http::StatusCode;
 
-/// Example of custom middleware to check if the user is authenticated.
-/// 
-/// Runs before the request handler.
+/// Example: custom middleware that runs before request handlers.
 /// 
 /// If the request is not authenticated, return a 401 Unauthorized status code.
 /// Otherwise, continue to the request handler.

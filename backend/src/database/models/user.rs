@@ -51,7 +51,10 @@ impl std::fmt::Debug for User {
 
 impl User {
     /// Register a new user in the database.
-    pub async fn register(new_user: NewUser, db_pool: &ConnectionPool) -> Result<(), RegisterError> {
+    pub async fn register(
+        new_user: NewUser,
+        db_pool: &ConnectionPool,
+    ) -> Result<(), RegisterError> {
         // Offload the password hashing and salting to a blocking task.
         let hash =
             task::spawn_blocking(move || password_auth::generate_hash(&new_user.password)).await?;
@@ -71,7 +74,10 @@ impl User {
     }
 
     /// Fetch a user by username from the database.
-    pub async fn fetch_by_username(username: &str, db_pool: &ConnectionPool) -> Result<Option<Self>, RegisterError> {
+    pub async fn fetch_by_username(
+        username: &str,
+        db_pool: &ConnectionPool,
+    ) -> Result<Option<Self>, RegisterError> {
         let db_connection = db_pool.get().await?;
 
         let row = db_connection
@@ -96,15 +102,6 @@ pub struct NewUser {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct UserLimited {
     pub username: String,
-}
-
-impl UserLimited {
-    /// Create a new limited user from a user.
-    pub fn new(username: String) -> Self {
-        Self {
-            username,
-        }
-    }
 }
 
 // Convert a user into a limited user.

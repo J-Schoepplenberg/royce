@@ -1,13 +1,10 @@
+use super::responses::StoreApiResponse;
 use crate::auth::backend::AuthSession;
 use askama_axum::IntoResponse;
 use axum::response;
 use http::StatusCode;
 
-use super::responses::StoreApiResponse;
-
-/// Example of a protected route.
-///
-/// Can only be accessed by authenticated users.
+/// Example endpoint: can only be accessed by authenticated users.
 pub async fn example_protected_handler() -> impl IntoResponse {
     response::Json("Protected route").into_response()
 }
