@@ -4,7 +4,7 @@ import { Requests } from "~/utils/requests";
 /** Some public endpoint. */
 export default function Home() {
   const [data] = createResource(
-    async () => (await Requests.getJson("/api")) as string
+    async () => (await Requests.getJson("/api/")) as string
   );
 
   return (

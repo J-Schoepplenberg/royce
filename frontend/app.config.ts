@@ -6,17 +6,16 @@ import { defineConfig } from "@solidjs/start/config";
  */
 
 export default defineConfig({
-    server: {
-        /** 
-         * Proxies requests to the backend server in development.
-         * Avoids any CORS issues with sessions.
-         * In production this is done by nginx.
-         */
-        devProxy: {
+    server: { // Nitro configurations.
+        devProxy: { // Proxy requests to backend server to avoid CORS issues.
             "/api": {
-                target: "http://127.0.0.1:3001",
+                target: "http://0.0.0.0:8000",
                 changeOrigin: true,
             },
-        }
-    }
+        },
+        compressPublicAssets: true, // Pre-compress public assets.
+        minify: true, // Minifies bundle.
+        output: { dir: "dist" }, // Bundle output directory.
+    },
+    ssr: false, // Toggle to client-side rendering
 });

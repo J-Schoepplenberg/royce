@@ -1,7 +1,6 @@
 use super::responses::StoreApiResponse;
 use crate::auth::backend::AuthSession;
-use askama_axum::IntoResponse;
-use axum::response;
+use axum::response::{self, IntoResponse};
 use http::StatusCode;
 
 /// Example endpoint: can only be accessed by authenticated users.

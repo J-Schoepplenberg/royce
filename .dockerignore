@@ -1,0 +1,9 @@
+backend/target
+backend/.cargo
+
+frontend/dist
+frontend/.output
+frontend/.vinxi
+frontend/node_modules
+
+.dockerignore

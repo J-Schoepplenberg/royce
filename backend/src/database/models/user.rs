@@ -57,7 +57,7 @@ impl User {
     ) -> Result<(), RegisterError> {
         // Offload the password hashing and salting to a blocking task.
         let hash =
-            task::spawn_blocking(move || password_auth::generate_hash(&new_user.password)).await?;
+            task::spawn_blocking(move || password_auth::generate_hash(new_user.password)).await?;
 
         let db_connection = db_pool.get().await?;
 

@@ -1,6 +1,6 @@
 use anyhow::Result;
 use api::{private, public};
-use auth::backend::AuthBackend;
+use auth::{backend::AuthBackend, sessions::init_redis_store};
 use axum::{
     middleware,
     routing::{get, post},
@@ -11,11 +11,15 @@ use database::setup::init_db;
 use http::HeaderValue;
 use std::{net::SocketAddr, sync::Arc, time::Duration};
 use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
-use tower_http::{compression::CompressionLayer, cors::CorsLayer, limit::RequestBodyLimitLayer};
+use tower_http::{
+    compression::CompressionLayer, cors::CorsLayer, limit::RequestBodyLimitLayer,
+    services::ServeDir,
+};
 use tower_sessions::{
     cookie::{Key, SameSite},
-    Expiry, MemoryStore, SessionManagerLayer,
+    Expiry, SessionManagerLayer,
 };
+use tower_sessions_redis_store::RedisStore;
 use utils::shutdown_signal;
 
 mod api;
@@ -26,6 +30,7 @@ mod utils;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // Initialize the logger.
     tracing_subscriber::fmt::init();
 
     tracing::info!("Starting server.");
@@ -33,8 +38,15 @@ async fn main() -> Result<()> {
     // PostgreSQL connection pool.
     let db_pool = init_db().await?;
 
-    // Session layer as a request extension.
-    let session_store = MemoryStore::default();
+    tracing::info!("Connection to PostgreSQL successfully established.");
+
+    // Round-robin Redis connection pool that is cheap to clone.
+    let (redis_pool, redis_connection) = init_redis_store().await?;
+
+    tracing::info!("Connection to Redis successfully established.");
+
+    // Session layer as a request extension using Redis as a session store.
+    let session_store = RedisStore::new(redis_pool);
 
     // Generates a singing/encryption key for the cookies.
     let key = Key::generate();
@@ -55,7 +67,7 @@ async fn main() -> Result<()> {
     // Add CORS header to responses.
     let cors = CorsLayer::new()
         .allow_credentials(true)
-        .allow_origin("http://127.0.0.1:3001".parse::<HeaderValue>().unwrap())
+        .allow_origin("http://localhost:8000".parse::<HeaderValue>().unwrap())
         .max_age(Duration::from_secs(3600));
 
     // Compresses response bodies.
@@ -64,8 +76,14 @@ async fn main() -> Result<()> {
     // Limit the size of request bodies to 1 MB.
     let request_size = RequestBodyLimitLayer::new(1024 * 1024);
 
-    // Rate limiter
-    let rate_limiter = Arc::new(GovernorConfigBuilder::default().finish().unwrap());
+    // Rate limiter.
+    let rate_limiter = Arc::new(
+        GovernorConfigBuilder::default()
+            .per_second(1)
+            .burst_size(50)
+            .finish()
+            .unwrap(),
+    );
 
     // Routes that require authentication.
     // The custom middleware runs before these handlers.
@@ -81,10 +99,14 @@ async fn main() -> Result<()> {
         .route("/login", post(public::login_handler))
         .route("/register", post(public::register_handler));
 
+    // Serve the frontend statically.
+    let static_dir = ServeDir::new("frontend/dist");
+
     // Router application.
     let app = Router::new()
-        .nest("/", public_routes)
-        .nest("/", protected_routes)
+        .nest("/api/", public_routes)
+        .nest("/api/", protected_routes)
+        .nest_service("/", static_dir)
         .layer(request_size)
         .layer(auth_layer)
         .layer(cors)
@@ -95,12 +117,12 @@ async fn main() -> Result<()> {
         .with_state(db_pool);
 
     // Socket address.
-    let socket_addr = SocketAddr::from(([127, 0, 0, 1], 3001));
+    let socket_addr = SocketAddr::from(([0, 0, 0, 0], 8000));
 
     // TCP listener.
     let listener = tokio::net::TcpListener::bind(socket_addr).await.unwrap();
 
-    tracing::info!("Listening on: {}", socket_addr);
+    tracing::info!("Backend listening on: {}", socket_addr);
 
     // Serve the application with hyper.
     axum::serve(
@@ -110,6 +132,9 @@ async fn main() -> Result<()> {
     .with_graceful_shutdown(shutdown_signal())
     .await
     .unwrap();
+
+    // Ensure the task managing the Redis connections runs to completion before exiting.
+    redis_connection.await??;
 
     Ok(())
 }

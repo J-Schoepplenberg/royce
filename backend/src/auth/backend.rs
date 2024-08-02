@@ -70,7 +70,7 @@ impl AuthnBackend for AuthBackend {
 
         // Verify the password in a blocking task since this might be expensive.
         task::spawn_blocking(|| {
-            Self::verify_password(creds.password, &user.password_hash).and_then(|_| Ok(Some(user)))
+            Self::verify_password(creds.password, &user.password_hash).map(|_| Some(user))
         })
         .await?
     }

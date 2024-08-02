@@ -1,15 +1,16 @@
 # royce
 
-Extremely simple `axum` + `SolidJS` starter for a fullstack web application.  
+Extremely simple `Axum` + `SolidJS` starter for a fullstack web application. 
 
-Deploy immediately with a ready-to-use preconfigured `Docker` deployment.
+Deploy immediately with a ready-to-use preconfigured `Docker` deployment. The static files of the frontend, the backend, database and session store are all run as a multi-container Docker Compose application.
+
+Implements the most basic setup that you will need for your next project: starting page, sign up, login and logout. This is the starting point from which you can build upon. Styling is done with Tailwind CSS, but you can easily switch it out to whatever you desire. 
 
 Fully fledged for high-performance:
 - Frontend: fine-grained reactivity framework `SolidStart`
-- Backend: multi-threaded asynchronous Rust backend `axum`
-- Sessions: in-memory database `redis`
+- Backend: multi-threaded asynchronous Rust backend `Axum`
+- Sessions: in-memory database `Redis`
 - Database: object-relational database `PostgreSQL`
-- Proxy: asynchronous proxy server `Nginx`
 - Deployment: container virtualization `Docker`
 
 Contains everything you need:
@@ -21,6 +22,18 @@ Contains everything you need:
 - Rate limiting
 - Request size limiting
 - Signed and encrypted cookies
+
+## Usage
+
+1. Install Git and Docker.
+2. Navigate to the directory where you want to clone this repository.
+3. Run in the terminal:
+```bash
+git clone https://github.com/J-Schoepplenberg/royce.git
+cd royce
+docker-compose up --build
+```
+4. Navigate in your browser to `http://localhost:8000`.
 
 ## Why SolidJS?
 

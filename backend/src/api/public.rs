@@ -6,8 +6,11 @@ use crate::{
         setup::ConnectionPool,
     },
 };
-use askama_axum::IntoResponse;
-use axum::{extract::State, response, Json};
+use axum::{
+    extract::State,
+    response::{self, IntoResponse},
+    Json,
+};
 use http::StatusCode;
 
 /// Example of a public endpoint.

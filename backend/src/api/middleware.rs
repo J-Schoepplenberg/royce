@@ -1,10 +1,9 @@
 use crate::auth::backend::AuthSession;
-use askama_axum::IntoResponse;
-use axum::{extract::Request, middleware::Next};
+use axum::{extract::Request, middleware::Next, response::IntoResponse};
 use http::StatusCode;
 
 /// Example: custom middleware that runs before request handlers.
-/// 
+///
 /// If the request is not authenticated, return a 401 Unauthorized status code.
 /// Otherwise, continue to the request handler.
 pub async fn check_auth(
