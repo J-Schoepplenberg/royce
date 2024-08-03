@@ -1,9 +1,21 @@
-backend/target
-backend/.cargo
+# General ignores
+**/target
+**/node_modules
+**/dist
+**/.git
+**/.idea
+**/.vscode
+**/.vinxi
+**/.output
+**/Dockerfile
+**/.dockerignore
+**/.cargo
+**/frontend/.env
+**/frontend/.env.local
 
-frontend/dist
-frontend/.output
-frontend/.vinxi
-frontend/node_modules
-
-.dockerignore
+# Ignore files created by editors or OS
+*.DS_Store
+*.log
+*.tmp
+*.swp
+*.bak
