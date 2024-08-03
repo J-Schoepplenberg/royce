@@ -68,7 +68,7 @@ impl AuthnBackend for AuthBackend {
 
         tracing::info!("A user is authenticating: {}.", user.username);
 
-        // Verify the password in a blocking task since this might be expensive.
+        // Offload the password verification to a blocking task.
         task::spawn_blocking(|| {
             Self::verify_password(creds.password, &user.password_hash).map(|_| Some(user))
         })

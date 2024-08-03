@@ -9,12 +9,13 @@ const MIGRATIONS_UP: [(&str, &str); 1] = [(
     include_str!("../../migrations/V1__create_users_table.sql"),
 )];
 
-/// Run migrations.
+/// Run migrations to create the database schema.
 pub async fn run_migrations() -> Result<()> {
-    let mut client = get_db_client().await;
+    let mut client = get_db_client().await?;
 
     let already_present = migrations_present(&mut client).await?;
 
+    // Only run migrations if the migrations table is not present.
     if !already_present {
         let migration = Migration::new("migrations".to_string());
         migration.up(&mut client, &MIGRATIONS_UP).await?;

@@ -23,17 +23,17 @@ pub async fn create_db_pool() -> Result<ConnectionPool> {
     Ok(pool)
 }
 
-/// Retireve the database configuration.
-pub fn get_db_config() -> tokio_postgres::Config {
-    let db_url = env::var("DB_URL").expect("DB_URL is not set.");
-    tokio_postgres::Config::from_str(&db_url).unwrap()
+/// Retrieve the database configuration.
+pub fn get_db_config() -> Result<tokio_postgres::Config> {
+    let db_url = env::var("DB_URL").context("DB_URL is not set.")?;
+    Ok(tokio_postgres::Config::from_str(&db_url)?)
 }
 
 /// Retrieve a database client.
-pub async fn get_db_client() -> tokio_postgres::Client {
-    let cfg = get_db_config();
-    let (client, con) = cfg.connect(tokio_postgres::NoTls).await.unwrap();
+pub async fn get_db_client() -> Result<tokio_postgres::Client> {
+    let cfg = get_db_config()?;
+    let (client, con) = cfg.connect(tokio_postgres::NoTls).await?;
     // Spawn and poll the connection as a background task to run it concurrently.
     tokio::spawn(con);
-    client
+    Ok(client)
 }
