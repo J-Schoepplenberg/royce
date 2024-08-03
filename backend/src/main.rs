@@ -67,7 +67,7 @@ async fn main() -> Result<()> {
     // Add CORS header to responses.
     let cors = CorsLayer::new()
         .allow_credentials(true)
-        .allow_origin("http://localhost:8000".parse::<HeaderValue>().unwrap())
+        .allow_origin("http://localhost:8000".parse::<HeaderValue>()?)
         .max_age(Duration::from_secs(3600));
 
     // Compresses response bodies.
@@ -99,7 +99,7 @@ async fn main() -> Result<()> {
         .route("/login", post(public::login_handler))
         .route("/register", post(public::register_handler));
 
-    // Serve the frontend statically.
+    // Serve the frontend statically in production.
     let static_dir = ServeDir::new("frontend/dist");
 
     // Router application.
@@ -120,7 +120,7 @@ async fn main() -> Result<()> {
     let socket_addr = SocketAddr::from(([0, 0, 0, 0], 8000));
 
     // TCP listener.
-    let listener = tokio::net::TcpListener::bind(socket_addr).await.unwrap();
+    let listener = tokio::net::TcpListener::bind(socket_addr).await?;
 
     tracing::info!("Backend listening on: {}", socket_addr);
 
@@ -130,8 +130,7 @@ async fn main() -> Result<()> {
         app.into_make_service_with_connect_info::<SocketAddr>(),
     )
     .with_graceful_shutdown(shutdown_signal())
-    .await
-    .unwrap();
+    .await?;
 
     // Ensure the task managing the Redis connections runs to completion before exiting.
     redis_connection.await??;
