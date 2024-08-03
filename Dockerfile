@@ -1,5 +1,5 @@
 # Start with a slim Debian-based image for Rust
-FROM rust:1.75-slim-bullseye as builder
+FROM rust:1.80-slim-bookworm as builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -33,12 +33,12 @@ RUN npm install
 RUN npm run build
 
 # Start a new stage for a smaller final image
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \
     ca-certificates \
-    libssl1.1 \
+    libssl3 \
     libpq5 \
     && rm -rf /var/lib/apt/lists/*
 
