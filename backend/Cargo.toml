@@ -2,11 +2,11 @@
 name = "royce"
 version = "0.0.1"
 authors = ["Jannis Schoepplenberg <jschoe@proton.me>"]
-description = "Rust web server starter with API routes, PostegreSQL and auth."
-keywords = []
-categories = []
+description = "Extremely simple Axum + SolidJS starter for a fullstack web application."
+keywords = ["starter", "fullstack", "web-application", "rust", "axum", "solidjs"]
 readme = "README.md"
 license = "MIT"
+repository = "https://github.com/J-Schoepplenberg/royce"
 edition = "2021"
 rust-version = "1.75"
 
@@ -34,3 +34,7 @@ tower-sessions-redis-store = "0.13.0"
 tower_governor = "0.4.2"
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
+
+[[bin]]
+name = "royce"
+path = "src/main.rs"

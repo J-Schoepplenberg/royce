@@ -2,6 +2,8 @@ use bb8::RunError;
 use thiserror::Error;
 use tokio::task::{self};
 
+// Custom errors that catch various errors that can occur in the application.
+
 #[derive(Error, Debug)]
 pub enum AuthError {
     #[error(transparent)]

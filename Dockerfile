@@ -18,8 +18,11 @@ COPY backend/Cargo.toml backend/Cargo.lock ./backend/
 COPY backend/src ./backend/src
 COPY backend/migrations ./backend/migrations
 
-# Build the Rust backend
+# Cache dependencies
 WORKDIR /usr/src/app/backend
+RUN cargo fetch
+
+# Build the Rust backend
 RUN cargo build --release
 
 # Build the SolidJS frontend
@@ -39,6 +42,9 @@ RUN apt-get update && apt-get install -y \
     libpq5 \
     && rm -rf /var/lib/apt/lists/*
 
+# Create a non-privileged user with no home directory and disabled password
+RUN useradd -r -s /bin/false appuser
+
 # Set the working directory
 WORKDIR /usr/src/app
 
@@ -48,7 +54,13 @@ COPY --from=builder /usr/src/app/backend/target/release/royce ./
 # Copy the built frontend files
 COPY --from=builder /usr/src/app/frontend/dist/public ./frontend/dist
 
-# Expose the port your app runs on
+# Set ownership and permissions
+RUN chown -R appuser:appuser /usr/src/app && chmod -R 755 /usr/src/app
+
+# Switch to non-privileged user
+USER appuser
+
+# Expose the port the backend runs on
 EXPOSE 8000
 
 # Command to run the application

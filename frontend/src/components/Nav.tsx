@@ -21,8 +21,8 @@ export default function Nav() {
 
   return (
     <nav class="bg-sky-800">
-      <ul class="flex justify-between items-center p-3 text-gray-200">
-        <div class="flex">
+      <div class="flex justify-between items-center p-3 text-gray-200">
+        <ul class="flex">
           <li class={`border-b-2 ${active("/")} mx-1.5 sm:mx-6`}>
             <a href="/">Home</a>
           </li>
@@ -31,8 +31,8 @@ export default function Nav() {
               <a href="/private">Protected</a>
             </li>
           </Show>
-        </div>
-        <div class="flex">
+        </ul>
+        <ul class="flex">
           <Show when={!store.isAuthenticated}>
             <li class={`border-b-2 ${active("/login")} mx-1.5 sm:mx-6`}>
               <a href="/login">Login</a>
@@ -42,15 +42,17 @@ export default function Nav() {
             </li>
           </Show>
           <Show when={store.isAuthenticated}>
-            <button
-              class="border-b-2 border-transparent hover:border-sky-600 mx-1.5 sm:mx-6"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
+            <li>
+              <button
+                class="border-b-2 border-transparent hover:border-sky-600 mx-1.5 sm:mx-6"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </li>
           </Show>
-        </div>
-      </ul>
+        </ul>
+      </div>
     </nav>
   );
 }

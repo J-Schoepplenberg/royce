@@ -7,11 +7,11 @@ Deploy immediately with a ready-to-use preconfigured `Docker` deployment. The st
 Implements the most basic setup that you will need for your next project: starting page, sign up, login and logout. This is the starting point from which you can build upon. Styling is done with Tailwind CSS, but you can easily switch it out to whatever you desire. 
 
 Fully fledged for high-performance:
-- Frontend: fine-grained reactivity framework `SolidStart`
-- Backend: multi-threaded asynchronous Rust backend `Axum`
-- Sessions: in-memory database `Redis`
-- Database: object-relational database `PostgreSQL`
-- Deployment: container virtualization `Docker`
+- **Frontend**: fine-grained reactivity framework `SolidStart`
+- **Backend**: multi-threaded asynchronous Rust backend `Axum`
+- **Sessions**: in-memory database `Redis`
+- **Database**: object-relational database `PostgreSQL`
+- **Deployment**: container virtualization `Docker`
 
 Contains everything you need:
 - Authentication
