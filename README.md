@@ -21,6 +21,16 @@ Contains everything you need:
 - Request size limiting
 - Signed and encrypted cookies
 
+## About
+
+The [Google Lighthouse](https://en.wikipedia.org/wiki/Google_Lighthouse) score:
+
+![Lighthouse](https://i.imgur.com/JAuPJPF.png)
+
+Styling is done with Tailwind CSS, but you can easily switch to whatever solution you prefer.
+
+The frontend, backend, database and session store are all run as a multi-container Docker Compose application.
+
 ## Usage
 
 1. Install Git and Docker.
@@ -46,16 +56,6 @@ docker-compose up --build
 The frontend will now run separately from the backend with HMR enabled at `http://localhost:3000/`. 
 
 The backend will be served at `http://localhost:8000/api/`.
-
-## About
-
-The [Google Lighthouse](https://en.wikipedia.org/wiki/Google_Lighthouse) score:
-
-![Lighthouse](https://i.imgur.com/JAuPJPF.png)
-
-Styling is done with Tailwind CSS, but you can easily switch to whatever solution you prefer.
-
-The frontend, backend, database and session store are all run as a multi-container Docker Compose application.
 
 ## Why SolidJS?
 
