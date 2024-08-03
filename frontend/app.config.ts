@@ -8,8 +8,8 @@ import { defineConfig } from "@solidjs/start/config";
 export default defineConfig({
     server: { // Nitro configurations.
         devProxy: { // Proxy requests to backend server to avoid CORS issues.
-            "/api": {
-                target: "http://0.0.0.0:8000",
+            "/api/": {
+                target: "http://0.0.0.0:8000/api/",
                 changeOrigin: true,
             },
         },
