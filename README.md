@@ -43,7 +43,7 @@ docker-compose up --build
 5. Open a new terminal in `royce\backend` and run `cargo run --release`.
 6. Open a new terminal in `royce\frontend` and run `npm run dev`.
 
-The frontend will now run separately from the backend with HMR (Hot Module Replacement) enabled at `http://localhost:3000/`. 
+The frontend will now run separately from the backend with HMR enabled at `http://localhost:3000/`. 
 
 The backend will be served at `http://localhost:8000/api/`.
 
@@ -55,7 +55,7 @@ The [Google Lighthouse](https://en.wikipedia.org/wiki/Google_Lighthouse) score:
 
 Styling is done with Tailwind CSS, but you can easily switch to whatever solution you prefer.
 
-The static files of the frontend, backend, database and session store are all run as a multi-container Docker Compose application.
+The frontend, backend, database and session store are all run as a multi-container Docker Compose application.
 
 ## Why SolidJS?
 
