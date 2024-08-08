@@ -32,8 +32,10 @@ impl AuthBackend {
     }
 
     /// Verify a password against a hash.
-    fn verify_password(password: String, hash: &str) -> Result<bool, AuthError> {
-        Ok(verify_password(password, hash).is_ok())
+    fn check_password(password: String, hash: &str) -> Result<bool, AuthError> {
+        verify_password(password, hash)
+            .map(|_| true)
+            .map_err(|_| AuthError::InvalidPassword)
     }
 
     /// Fetch a user by username from the database.
@@ -70,7 +72,7 @@ impl AuthnBackend for AuthBackend {
 
         // Offload the password verification to a blocking task.
         task::spawn_blocking(|| {
-            Self::verify_password(creds.password, &user.password_hash).map(|_| Some(user))
+            Self::check_password(creds.password, &user.password_hash).map(|_| Some(user))
         })
         .await?
     }

@@ -14,6 +14,9 @@ pub enum AuthError {
 
     #[error(transparent)]
     TaskJoin(#[from] task::JoinError),
+
+    #[error("Failed password verification.")]
+    InvalidPassword,
 }
 
 #[derive(Error, Debug)]
