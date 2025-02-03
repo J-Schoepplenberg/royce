@@ -2,8 +2,8 @@ use crate::database::migration::run_migrations;
 use anyhow::{Context, Result};
 use bb8::Pool;
 use bb8_postgres::PostgresConnectionManager;
-use std::{env, str::FromStr};
-use tokio_postgres::NoTls;
+use std::env;
+use tokio_postgres::{Config,NoTls};
 
 /// Simplified type alias for a database connection pool.
 pub type ConnectionPool = Pool<PostgresConnectionManager<NoTls>>;
@@ -15,18 +15,33 @@ pub async fn init_db() -> Result<ConnectionPool> {
     Ok(pool)
 }
 
+/// Create database configuration from environment variables
+fn create_db_config() -> Result<Config> {
+    let mut config = Config::new();
+    config
+        .host(&env::var("POSTGRES_HOST").context("POSTGRES_HOST is not set")?)
+        .port(env::var("POSTGRES_PORT").unwrap_or_else(|_| "5432".to_string()).parse()?)
+        .user(&env::var("POSTGRES_USER").context("POSTGRES_USER is not set")?)
+        .password(&env::var("POSTGRES_PASSWORD").context("POSTGRES_PASSWORD is not set")?)
+        .dbname(&env::var("POSTGRES_DB").context("POSTGRES_DB is not set")?);
+    Ok(config)
+}
+
 /// Create a database connection pool.
 pub async fn create_db_pool() -> Result<ConnectionPool> {
-    let database_url = env::var("DB_URL").context("DB_URL is not set.")?;
-    let manager = PostgresConnectionManager::new_from_stringlike(database_url, NoTls)?;
-    let pool = Pool::builder().build(manager).await?;
+    let config = create_db_config()?;
+    let manager = PostgresConnectionManager::new(config, NoTls);
+    let pool = Pool::builder()
+        .max_size(16)
+        .build(manager)
+        .await?;
     Ok(pool)
 }
 
 /// Retrieve the database configuration.
 pub fn get_db_config() -> Result<tokio_postgres::Config> {
-    let db_url = env::var("DB_URL").context("DB_URL is not set.")?;
-    Ok(tokio_postgres::Config::from_str(&db_url)?)
+    // Use the same configuration as create_db_config
+    create_db_config()
 }
 
 /// Retrieve a database client.
