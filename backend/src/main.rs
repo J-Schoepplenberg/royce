@@ -8,6 +8,7 @@ use axum::{
 };
 use axum_login::AuthManagerLayerBuilder;
 use database::setup::init_db;
+use dotenvy::from_filename;
 use http::HeaderValue;
 use std::{net::SocketAddr, sync::Arc, time::Duration};
 use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
@@ -22,6 +23,9 @@ use tower_sessions::{
 use tower_sessions_redis_store::RedisStore;
 use utils::shutdown_signal;
 
+use tracing::{info, debug, warn, error};
+use tracing_subscriber;
+
 mod api;
 mod auth;
 mod database;
@@ -30,8 +34,21 @@ mod utils;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Initialize the logger.
-    tracing_subscriber::fmt::init();
+    // Load environment variables based on RUST_ENV
+    match std::env::var("RUST_ENV").unwrap_or_else(|_| "development".to_string()).as_str() {
+        "production" => from_filename(".env").ok(),
+        _ => from_filename("dev.env").ok(),
+    };
+    
+    // Initialize tracing logs with specified default level.
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .init();
+
+    info!("This is an info message.");
+    debug!("This is a debug message.");
+    warn!("This is a warning message.");
+    error!("This is an error message.");
 
     tracing::info!("Starting server.");
 

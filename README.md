@@ -39,7 +39,7 @@ The frontend, backend, database and session store are all run as a multi-contain
 ```bash
 git clone https://github.com/J-Schoepplenberg/royce.git
 cd royce
-docker-compose up --build
+docker compose up --build
 ```
 4. Navigate in your browser to `http://localhost:8000`.
 
@@ -47,11 +47,21 @@ docker-compose up --build
 
 1. Install rustup, NodeJS and PostgreSQL.
 2. Start the PostgreSQL server on your machine.
+
+```bash
+docker run -d --name royce-postgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=royce -p 5432:5432 -v pgdata:/var/lib/postgresql/data postgres:latest
+```
+
 3. Clone this repository `git clone https://github.com/J-Schoepplenberg/royce.git`.
 4. Switch for the session store from `RedisStore` to `MemoryStore::default()` in `royce\backend\src\main.rs`.
     - Alternatively, you can install Redis on your machine and start the Redis server.
+
+```bash
+docker run -d --name royce-redis -p 6379:6379 redis:latest
+```
+
 5. Open a new terminal in `royce\backend` and run `cargo run --release`.
-6. Open a new terminal in `royce\frontend` and run `npm run dev`.
+6. Open a new terminal in `royce\frontend` and run `npm install` `npm run dev`.
 
 The frontend will now run separately from the backend with HMR enabled at `http://localhost:3000/`. 
 

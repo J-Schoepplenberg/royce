@@ -27,4 +27,6 @@ pub async fn shutdown_signal() {
     }
 
     tracing::info!("Shutdown signal received, commencing shutdown.");
+
+    std::process::exit(0);
 }

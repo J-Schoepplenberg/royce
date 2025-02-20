@@ -1,5 +1,5 @@
 # Start with a slim Debian-based image for Rust
-FROM rust:1.80-slim-bookworm as builder
+FROM rust:1.80-slim-bookworm AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -17,6 +17,9 @@ WORKDIR /usr/src/app
 COPY backend/Cargo.toml backend/Cargo.lock ./backend/
 COPY backend/src ./backend/src
 COPY backend/migrations ./backend/migrations
+
+# Set the environment variable for production.
+ENV RUST_ENV=production
 
 # Cache dependencies
 WORKDIR /usr/src/app/backend
